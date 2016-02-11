@@ -33,7 +33,7 @@ func main() {
 		})
 		name := ui.NewEntry()
 		button := ui.NewButton("Greet")
-		doc := uidoc.NewDoc()
+		doc := uidoc.New()
 		doc.SetDocument(document)
 		box := ui.NewVerticalBox()
 		box.Append(ui.NewLabel("Enter your name:"), false)
