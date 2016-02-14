@@ -1,17 +1,25 @@
 package uidoc
 
-import "github.com/andlabs/ui"
+import (
+	"math"
+
+	"github.com/andlabs/ui"
+)
 
 // Convenience struct to implement some of the Element Interface with fields
 type ElementBase struct {
 	MarginLeft, MarginRight, MarginTop, MarginBottom     float64
 	PaddingLeft, PaddingRight, PaddingTop, PaddingBottom float64
-	Background                                           *ui.Brush
+	BorderWidth                                          float64
+	Background, Border                                   *ui.Brush
 	LayoutMode                                           LayoutMode
 }
 
 func (e *ElementBase) Fill() *ui.Brush {
 	return e.Background
+}
+func (e *ElementBase) Stroke() (*ui.Brush, float64) {
+	return e.Border, e.BorderWidth
 }
 func (e *ElementBase) Mode() LayoutMode {
 	return e.LayoutMode
@@ -27,11 +35,13 @@ type Text struct {
 	ElementBase
 	Font, lFont *ui.Font
 	Text, lText string
+	Wrap        bool
 	layout      *ui.TextLayout
 }
 
 func NewText(text string, font *ui.Font) *Text {
 	t := new(Text)
+	t.Wrap = true
 	t.Text = text
 	t.Font = font
 	t.layout = ui.NewTextLayout(text, font, 0)
@@ -41,6 +51,9 @@ func NewText(text string, font *ui.Font) *Text {
 }
 
 func (e *Text) Layout(width float64) (w float64, h float64) {
+	if !e.Wrap {
+		width = math.MaxFloat64
+	}
 	if e.Text != e.lText || e.Font != e.lFont {
 		e.layout.Free()
 		e.layout = ui.NewTextLayout(e.Text, e.Font, width)

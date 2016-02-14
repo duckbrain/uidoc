@@ -54,20 +54,24 @@ func (g *Group) Layout(width float64) (w float64, h float64) {
 		case LayoutInline:
 			eleWidth := l.w + mRight + pRight + mLeft + mRight
 			if x+eleWidth > groupRight {
+				// It's overflowing, reflow it below
 				x = groupLeft
 				y += lineHeight
 				lineHeight = 0
+				l.y = y + mTop + pTop
+				l.x = x + mLeft + pLeft
+				l.w, l.h = l.e.Layout(groupRight - x - mRight - pRight)
+				lineHeight = max(lineHeight, l.h+mBottom+pBottom+mTop+pTop)
+				w = max(w, x+l.w+mRight+pRight)
+				eleWidth = l.w + mRight + pRight + mLeft + mRight
+				x += eleWidth
 			} else {
 				x += eleWidth
 			}
 		default:
 			panic(fmt.Errorf("Invlalid LayoutMode %v", l.e.Mode()))
 		}
-		if b := l.e.Fill(); b != nil {
-			l.path = ui.NewPath(ui.Winding)
-			l.path.AddRectangle(l.x-pLeft, l.y-pTop, l.w+pLeft+pRight, l.h+pTop+pBottom)
-			l.path.End()
-		}
+
 		g.layouts[i] = l
 	}
 	h = y + lineHeight
@@ -75,10 +79,17 @@ func (g *Group) Layout(width float64) (w float64, h float64) {
 }
 func (g *Group) Render(dp *ui.AreaDrawParams, x, y float64) {
 	for _, l := range g.layouts {
-		if l.path != nil {
+		if b := l.e.Fill(); b != nil {
+			l.path = ui.NewPath(ui.Winding)
+			pTop, pRight, pBottom, pLeft := l.e.Padding()
+			l.path.AddRectangle(x+l.x-pLeft, y+l.y-pTop, l.w+pLeft+pRight, l.h+pTop+pBottom)
+			l.path.End()
 			dp.Context.Fill(l.path, l.e.Fill())
+			if stroke, thickness := l.e.Stroke(); stroke != nil {
+				dp.Context.Stroke(l.path, stroke, &ui.StrokeParams{Thickness: thickness})
+			}
 		}
-		l.e.Render(dp, l.x, l.y)
+		l.e.Render(dp, x+l.x, y+l.y)
 	}
 }
 func (g *Group) Free() {

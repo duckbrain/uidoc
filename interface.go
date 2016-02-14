@@ -4,6 +4,7 @@ import "github.com/andlabs/ui"
 
 type Element interface {
 	Fill() *ui.Brush
+	Stroke() (*ui.Brush, float64)
 	Margins() (top, right, bottom, left float64)
 	Padding() (top, right, bottom, left float64)
 	Mode() LayoutMode
@@ -14,8 +15,7 @@ type Element interface {
 
 type Interacter interface {
 	Element
-	MouseEvent(me *ui.AreaMouseEvent)
-	MouseCrossed(left bool)
+	SetPressed(b bool)
 	SetFocused(bool)
 	OnActivate()
 }
