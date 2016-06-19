@@ -20,9 +20,7 @@ func main() {
 		panic(err)
 	}
 	var document uidoc.Element
-	//document = uidoc.NewGroup([]uidoc.Element{})
 
-	// TODO: This is commented out because some bug is causing it to crash
 	err = ui.Main(func() {
 		document, err = uidoc.Parse(buffer.Bytes())
 		if err != nil {
