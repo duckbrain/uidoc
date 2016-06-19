@@ -2,11 +2,9 @@ package main
 
 import (
 	"bytes"
-	"fmt"
-	"os"
-
 	"github.com/andlabs/ui"
 	"github.com/duckbrain/uidoc"
+	"os"
 )
 
 func main() {
@@ -21,12 +19,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	document, err := uidoc.Parse(buffer.Bytes())
-	if err != nil {
-		panic(err)
-	}
+	var document uidoc.Element
+	//document = uidoc.NewGroup([]uidoc.Element{})
 
+	// TODO: This is commented out because some bug is causing it to crash
 	err = ui.Main(func() {
+		document, err = uidoc.Parse(buffer.Bytes())
+		if err != nil {
+			panic(err)
+		}
+
 		font := ui.LoadClosestFont(&ui.FontDescriptor{
 			Family: "Deja Vu",
 			Size:   12,
@@ -43,7 +45,6 @@ func main() {
 		window := ui.NewWindow("Hello", 400, 700, false)
 		window.SetChild(box)
 		button.OnClicked(func(*ui.Button) {
-			fmt.Printf("Setting name")
 			element := uidoc.NewText("Hello, "+name.Text()+"!", font)
 			document.(*uidoc.Group).Append(element)
 			doc.Layout()
