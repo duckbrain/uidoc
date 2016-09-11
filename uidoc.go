@@ -157,6 +157,12 @@ func (r *drawHandler) Draw(a *ui.Area, dp *ui.AreaDrawParams) {
 	if r.parent.doc == nil {
 		return
 	}
+	if f := r.parent.doc.Fill(); f != nil {
+		p := ui.NewPath(ui.Winding)
+		p.AddRectangle(dp.ClipX, dp.ClipY, dp.ClipWidth, dp.ClipHeight)
+		p.End()
+		dp.Context.Fill(p, f)
+	}
 	r.parent.doc.Render(dp, 0, 0)
 }
 
