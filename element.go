@@ -27,8 +27,20 @@ func (e *ElementBase) Mode() LayoutMode {
 func (e *ElementBase) Margins() (top, right, bottom, left float64) {
 	return e.MarginTop, e.MarginRight, e.MarginBottom, e.MarginLeft
 }
+func (e *ElementBase) SetMargins(n float64) {
+	e.MarginTop = n
+	e.MarginRight = n
+	e.MarginBottom = n
+	e.MarginLeft = n
+}
 func (e *ElementBase) Padding() (top, right, bottom, left float64) {
 	return e.PaddingTop, e.PaddingRight, e.PaddingLeft, e.PaddingBottom
+}
+func (e *ElementBase) SetPadding(n float64) {
+	e.PaddingTop = n
+	e.PaddingRight = n
+	e.PaddingBottom = n
+	e.PaddingLeft = n
 }
 
 type Text struct {
